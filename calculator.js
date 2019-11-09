@@ -1,6 +1,3 @@
-// TODO
-// Add keyboard support
-
 /* Select calculator display elements */
 let operatorDisplay = document.querySelector("#operation");
 let outputDisplay = document.querySelector('#output');
@@ -9,6 +6,7 @@ let operandA;
 let operandB;
 let operatorSymbol;
 let equalPressed = false;
+let displayWidth = 11; // Width of output display in characters
 
 /* Math operators */
 function calculate(a, operator, b) {
@@ -41,6 +39,12 @@ function clearPressed() {
 // Concatenate characters into a string of numbers
 function numberPressed(value) {
     equalPressed = false;
+    // Limit the number of input characters
+    if (operandCandidate) {
+        if (operandCandidate.toString().length >= displayWidth) {
+            return;
+        }
+    }
     if (!operatorSymbol && !operandCandidate) {
         operandCandidate = value;
         updateDisplay(operandCandidate);
@@ -86,7 +90,7 @@ function operate() {
     operandB = operandCandidate;
     // Truncate number to fit display
     let answer = calculate(operandA, operatorSymbol, operandB);
-    answer = answer.toString().substring(0, 11);
+    answer = answer.toString().substring(0, displayWidth);
     updateDisplay(answer);
 
     // Reset variables and clear display
@@ -95,6 +99,22 @@ function operate() {
     operandB = undefined;
     operatorSymbol = undefined;
     updateOperation(operatorSymbol);
+}
+
+function enterDecimal(value) {
+    // Prevent multiple decimal places in number
+    if (operandCandidate) {
+        operandCandidate.indexOf('.') == -1 ? numberPressed(value) : null;
+    } else {
+        numberPressed(value);
+    }
+}
+
+function deleteLastNumber() {
+    if (operandCandidate) {
+        operandCandidate = operandCandidate.slice(0, -1);
+        updateDisplay(operandCandidate);
+    }
 }
 
 function buttonPressed(value) {
@@ -113,12 +133,7 @@ function buttonPressed(value) {
             numberPressed(value);
             break;
         case '.':
-            // Prevent multiple decimal places in number
-            if (operandCandidate) {
-                operandCandidate.indexOf('.') == -1 ? numberPressed(value) : null;
-            } else {
-                numberPressed(value);
-            }
+            enterDecimal(value);
             break;
         case 'Clear':
             clearPressed()
@@ -130,14 +145,13 @@ function buttonPressed(value) {
             operatorPressed(value);
             break;
         case '\u21E4': // Back button
-            operandCandidate = operandCandidate.slice(0, -1);
-            updateDisplay(operandCandidate);
+            deleteLastNumber();
             break;
         case '=':
             operate();
             break;
         default:
-            updateDisplay('Error case default`');
+            updateDisplay('Error default case');
             break;
     }
 }
@@ -152,4 +166,99 @@ function wireUpButtons() {
     })
 }
 
+function wireUpKeyboard() {
+    window.addEventListener('keydown', function (event) {
+        // document.querySelector()
+        switch (event.key) {
+            case '1':
+                document.getElementById('btn-one').classList.add('keyPressed');
+                buttonPressed('1');
+                break;
+            case '2':
+                document.getElementById('btn-two').classList.add('keyPressed');
+                buttonPressed('2');
+                break;
+            case '3':
+                document.getElementById('btn-three').classList.add('keyPressed');
+                buttonPressed('3');
+                break;
+            case '4':
+                document.getElementById('btn-four').classList.add('keyPressed');
+                buttonPressed('4');
+                break;
+            case '5':
+                document.getElementById('btn-five').classList.add('keyPressed');
+                buttonPressed('5');
+                break;
+            case '6':
+                document.getElementById('btn-six').classList.add('keyPressed');
+                buttonPressed('6');
+                break;
+            case '7':
+                document.getElementById('btn-seven').classList.add('keyPressed');
+                buttonPressed('7');
+                break;
+            case '8':
+                document.getElementById('btn-eight').classList.add('keyPressed');
+                buttonPressed('8');
+                break;
+            case '9':
+                document.getElementById('btn-nine').classList.add('keyPressed');
+                buttonPressed('9');
+                break;
+            case '0':
+                document.getElementById('btn-zero').classList.add('keyPressed');
+                buttonPressed('0');
+                break;
+            case '.':
+                document.getElementById('btn-decimal').classList.add('keyPressed');
+                enterDecimal('.')
+                break;
+            case 'Clear':
+            case 'Escape':
+                document.getElementById('btn-clear').classList.add('keyPressed');
+                clearPressed()
+                break;
+            case '/':
+                document.getElementById('btn-division').classList.add('keyPressed');
+                operatorPressed('÷');
+                break;
+            case '*':
+                document.getElementById('btn-multiply').classList.add('keyPressed');
+                operatorPressed('×');
+                break;
+            case '-':
+                document.getElementById('btn-subtract').classList.add('keyPressed');
+                operatorPressed('−');
+                break;
+            case '+':
+                document.getElementById('btn-plus').classList.add('keyPressed');
+                operatorPressed('+');
+                break;
+            case 'Backspace': // Back button
+            case 'Delete': // Back button
+                document.getElementById('btn-delete').classList.add('keyPressed');
+                deleteLastNumber();
+                break;
+            case '=':
+            case 'Enter':
+                document.getElementById('btn-equal').classList.add('keyPressed');
+                operate();
+                break;
+            default:
+                updateDisplay('Error keyboard case');
+                break;
+        }
+    })
+}
+
+// Remote highlight from button when keystroke is lifted up
+function keyboardReleaseKey() {
+    window.addEventListener('keyup', function (event) {
+        document.querySelector('.keyPressed').classList.remove('keyPressed');
+    })
+}
+
 window.onload = wireUpButtons();
+window.onload = wireUpKeyboard();
+window.onload = keyboardReleaseKey();

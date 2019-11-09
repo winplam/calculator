@@ -127,3 +127,7 @@ span {
 .numbers:active {
     background-color: gainsboro;
 }
+
+.keyPressed {
+    background-color: lawngreen;
+}
