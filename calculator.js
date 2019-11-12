@@ -77,7 +77,7 @@ function operatorPressed(value) {
         operatorSymbol = value;
         updateOperation(operatorSymbol);
     } else {
-        updateDisplay("Error operators")
+        updateDisplay("Error Operators")
     }
 }
 
@@ -151,7 +151,7 @@ function buttonPressed(value) {
             operate();
             break;
         default:
-            updateDisplay('Error default case');
+            updateDisplay('Error Default Case');
             break;
     }
 }
@@ -246,7 +246,6 @@ function wireUpKeyboard() {
                 operate();
                 break;
             default:
-                updateDisplay('Error keyboard case');
                 break;
         }
     })
